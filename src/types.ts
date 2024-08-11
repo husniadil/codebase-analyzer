@@ -2,6 +2,7 @@ export type Config = {
   directory?: string;
   relevantExtensions?: string[];
   maxFileSize?: number;
+  enableTokenCounting?: boolean;
   maxTokens?: number;
   ignorePatterns?: string[];
   ignoreFilesWithNoExtension?: boolean;

@@ -1,7 +1,6 @@
 import { promises as fs } from "node:fs";
 import * as path from "node:path";
-import { Tiktoken } from "tiktoken/lite";
-import model from "tiktoken/encoders/o200k_base";
+import { encodingForModel } from "js-tiktoken";
 import { Config, Output, FileNode, ICodebaseAnalyzer } from "./types";
 import { formatSize } from "./util";
 
@@ -9,6 +8,7 @@ export class CodebaseAnalyzer implements ICodebaseAnalyzer {
   private readonly directory: string;
   private readonly relevantExtensions: string[];
   private readonly maxFileSize: number;
+  private readonly enableTokenCounting: boolean;
   private readonly maxTokens: number;
   private readonly ignorePatterns: string[];
   private readonly ignoreFilesWithNoExtension: boolean;
@@ -42,6 +42,7 @@ export class CodebaseAnalyzer implements ICodebaseAnalyzer {
         ".less",
       ],
       maxFileSize = 100_000,
+      enableTokenCounting = false,
       maxTokens = 100_000,
       ignorePatterns = [
         "node_modules",
@@ -66,6 +67,7 @@ export class CodebaseAnalyzer implements ICodebaseAnalyzer {
     this.directory = path.resolve(directory);
     this.relevantExtensions = relevantExtensions;
     this.maxFileSize = maxFileSize;
+    this.enableTokenCounting = enableTokenCounting;
     this.maxTokens = maxTokens;
     this.ignorePatterns = ignorePatterns;
     this.ignoreFilesWithNoExtension = ignoreFilesWithNoExtension;
@@ -195,7 +197,7 @@ export class CodebaseAnalyzer implements ICodebaseAnalyzer {
 
   private truncateContext(context: string): string {
     const tokens = context.split(/\s+/);
-    if (tokens.length > this.maxTokens) {
+    if (this.enableTokenCounting ? tokens.length > this.maxTokens: false) {
       console.warn("Context truncated due to token limit.");
       return tokens.slice(0, this.maxTokens).join(" ");
     }
@@ -203,13 +205,8 @@ export class CodebaseAnalyzer implements ICodebaseAnalyzer {
   }
 
   private async countTokens(code: string): Promise<number> {
-    const encoder = new Tiktoken(
-      model.bpe_ranks,
-      model.special_tokens,
-      model.pat_str,
-    );
+    const encoder = encodingForModel("gpt-4o");
     const tokens = encoder.encode(code);
-    encoder.free();
     return tokens.length;
   }
 
@@ -232,8 +229,8 @@ export class CodebaseAnalyzer implements ICodebaseAnalyzer {
       const fileNode = await this.gatherFiles(this.directory);
       const context = await this.gatherContext(fileNode);
       const truncatedContext = this.truncateContext(context);
-      const tokenCount = await this.countTokens(truncatedContext);
       const treeView = await this.buildTreeView(fileNode);
+      const tokenCount = this.enableTokenCounting ? await this.countTokens(truncatedContext) : 0;
       return {
         context: truncatedContext,
         tokenCount,

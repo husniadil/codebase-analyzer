@@ -1,7 +1,7 @@
 {
   "name": "@husniadil/codebase-analyzer",
   "version": "0.0.1",
-  "description": "A comprehensive tool for analyzing and summarizing codebases, supporting multiple file types and providing detailed file tree views and context extraction.",
+  "description": "A compr ehensive tool for analyzing and summarizing codebases, supporting multiple file types and providing detailed file tree views and context extraction.",
   "main": "dist/index.js",
   "module": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -33,6 +33,6 @@
     "typescript": "^5.4.5"
   },
   "dependencies": {
-    "tiktoken": "^1.0.15"
+    "js-tiktoken": "^1.0.12"
   }
 }
