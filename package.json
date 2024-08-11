@@ -1,6 +1,6 @@
 {
   "name": "@husniadil/codebase-analyzer",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "A compr ehensive tool for analyzing and summarizing codebases, supporting multiple file types and providing detailed file tree views and context extraction.",
   "main": "dist/index.js",
   "module": "dist/index.js",
