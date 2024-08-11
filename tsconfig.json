@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "strict": true,
+    "noImplicitAny": true,
+    "esModuleInterop": true,
+    "strictNullChecks": true,
+    "target": "ES2022",
+    "moduleResolution": "Node10",
+    "resolveJsonModule": true,
+    "module": "ESNext",
+    "declaration": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "outDir": "./dist",
+  },
+  "include": ["src/**/*", "test/codebase-analyzer.test.ts"],
+  "exclude": ["node_modules"]
+}
